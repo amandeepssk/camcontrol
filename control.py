@@ -14,18 +14,15 @@ def stop():
 
 def start(secs):
     #secs is how long between captures
-    print config.is_capturing()
     if not config.is_capturing():
         print 'Starting all cameras with %d time between captures' % secs
         config.start_capturing()
-        print config.is_capturing()
         _continuously_capture(secs) #use subprocess call so that it's not taking command line
     else:
         print 'Capturing already turned on'
 
 def _continuously_capture(secs):
     cams = _get_cams()
-    print config.is_capturing()
     while config.is_capturing():
         for cam in cams:
             if cam[-1] != '1': 
@@ -39,6 +36,7 @@ def _get_cams():
     return None
 
 def _capture(cam, time):
+    print 'Capturing from cam %s' % cam
     command = _capture_command(cam, time)
     output, errors = _subprocess(command)
     
