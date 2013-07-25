@@ -17,7 +17,7 @@ def _compress_files(now, save_files):
     if len(save_files) > 0:
         with tarfile.open(config.archive_dir() + '/' + str(now) + '.tar.gz', "w:gz") as tar:
             for f in save_files:
-                tar.add(f)
+                tar.add(f, arcname=f.split('/')[-1])
         for f in save_files:
             os.remove(f)
 
