@@ -8,6 +8,7 @@ def _subprocess(command, shell=True):
     return output, errors
 
 def stop():
+    #ps aux | grep python --> get PID, kill it.
     print 'Stopping all cameras'
     config.stop_capturing()
     print 'Stopped all cameras'
@@ -25,8 +26,7 @@ def _continuously_capture(secs):
     cams = _get_cams()
     while config.is_capturing():
         for cam in cams:
-            if cam[-1] != '1': 
-                _capture(cam, config.get_unixtime())
+            _capture(cam, config.get_unixtime())
         sleep(secs)
 
 def _get_cams():
@@ -43,5 +43,5 @@ def _capture(cam, time):
 def _capture_command(cam, time):
     pos = cam[-1]
     fout = config.capture_dir() + '/' + str(time) + '_' + pos + '.jpeg'
-    return 'streamer -t 1 -r 30 -c %s -o %s -s 960x720' % (cam, fout)
+    return 'streamer -t 1 -r 30 -c %s -o %s -j 100 -s 960x720' % (cam, fout)
 
