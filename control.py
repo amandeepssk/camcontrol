@@ -1,44 +1,25 @@
+import select
 import subprocess as sub
-from time import sleep
 import config
+import pinIO
 
-def _subprocess(command, shell=True):
-    p = sub.Popen(command, stdout=sub.PIPE, stderr=sub.PIPE, shell=shell)
-    output, errors = p.communicate()
-    return output, errors
+gpio_dir = config.gpio_dir
 
-def stop():
-    #ps aux | grep python --> get PID, kill it.
-    print 'Stopping all cameras'
-    config.stop_capturing()
-    print 'Stopped all cameras'
-
-def start(secs):
-    #secs is how long between captures
-    if not config.is_capturing():
-        print 'Starting all cameras with %d time between captures' % secs
-        config.start_capturing()
-        _continuously_capture(secs) #use subprocess call so that it's not taking command line
-    else:
-        print 'Capturing already turned on'
-
-def _continuously_capture(secs):
+def capture():
+    now = config.get_unixtime()
     cams = _get_cams()
-    while config.is_capturing():
-        for cam in cams:
-            _capture(cam, config.get_unixtime())
-        sleep(secs)
-
+    for cam in cams:
+        _capture(cam, now)
+    
 def _get_cams():
-    output, errors = _subprocess('ls /dev/video*')
+    output, errors = pinIO.subprocess('ls /dev/video*')
     if output and not errors:
         return output.strip().split('\n')
-    return None
+    return []
 
 def _capture(cam, time):
-    print 'Capturing from cam %s' % cam
-    command = _capture_command(cam, time)
-    output, errors = _subprocess(command)
+    print 'Capturing from cam %s at time %d' % (cam, time)
+    pinIO.subprocess(_capture_command(cam, time))
     
 def _capture_command(cam, time):
     pos = cam[-1]

@@ -2,7 +2,7 @@ import os
 import config
 import tarfile
 
-def save(secs):
+def save(secs=600):
     #secs is how far back to save
     print 'Compressing the past %d seconds' % secs
     secs = secs * 1000000
