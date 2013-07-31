@@ -6,11 +6,9 @@ gpio_dir = '/sys/class/gpio'
 pins = {'archive':'23', 'toggle':'22'}
 
 #green light on end is pin 27
-#
-#Other light is pin 44
+#green light closer is pin 44
+
 def _subprocess(command, shell=True):
-
-
     p = sub.Popen(command, stdout=sub.PIPE, stderr=sub.PIPE, shell=shell)
     output, errors = p.communicate()
     return output, errors
