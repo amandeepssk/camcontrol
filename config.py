@@ -10,7 +10,7 @@ switch_pins = {'archive':'23', 'toggle':'22'}
 light_pins  = {'archive':'27', 'toggle':'44'}
 
 def _get_dir(ext):
-    return os.getcwd() + '/' + ext
+    return os.path.realpath(__file__)[:-10] + '/' + ext
 
 def capture_dir():
     return _get_dir('captures')
@@ -30,12 +30,3 @@ def toggle_capturing(set_value=None):
 
 def get_unixtime():
     return int((datetime.datetime.utcnow() - start_date).total_seconds()*1000000)
-
-def cwd():
-    return os.getcwd()
-
-def capture_dir():
-    return cwd() + '/captures'
-
-def archive_dir():
-    return cwd() + '/saved'
