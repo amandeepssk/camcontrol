@@ -10,8 +10,9 @@ switch_pins = {'archive':'23', 'toggle':'22'}
 light_pins  = {'archive':'27', 'toggle':'44'}
 
 def _get_dir(ext):
-    if os.path.exists('/media/BONESTORAGE/uEnv.txt'):
+    if os.path.exists('/media/BONESTORAGE'):
         if not os.path.exists('/media/BONESTORAGE/' + ext):
+            print 'mkdiring bonestorage'
             os.mkdir('/media/BONESTORAGE/' + ext)
         return '/media/BONESTORAGE/' + ext
     return os.path.realpath(__file__)[:-10] + '/' + ext

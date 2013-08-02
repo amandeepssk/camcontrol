@@ -6,6 +6,7 @@ def save(secs=600):
     #secs is how far back to save
     secs = secs * 1000000
     current_time = config.get_unixtime()
+    print 'Archiving at time %s' % current_time
     min_time = last_archive_time()
     if min_time < current_time - secs:
         min_time = current_time - secs
@@ -47,6 +48,7 @@ def roll(secs):
     #secs is how far back to delete, i.e. 3600 would be deleting everything > 1 hr before
     directory = config.capture_dir()
     current_time = config.get_unixtime()
+    print 'Rolling at time %s' % current_time
     secs = secs * 1000000
     for f in os.listdir(directory):
         try:
