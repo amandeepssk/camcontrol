@@ -23,7 +23,6 @@ def _open_pins(pins, direction, rising=False):
 def close_pins():
     _close_pins(config.switch_pins)
     _close_pins(config.light_pins)
-    print 'Closed pins'
     return True
 
 def _close_pins(pins):

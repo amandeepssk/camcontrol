@@ -11,6 +11,8 @@ light_pins  = {'archive':'27', 'toggle':'44'}
 
 def _get_dir(ext):
     if os.path.exists('/media/BONESTORAGE/uEnv.txt'):
+        if not os.path.exists('/media/BONESTORAGE/' + ext):
+            os.mkdir('/media/BONESTORAGE/' + ext)
         return '/media/BONESTORAGE/' + ext
     return os.path.realpath(__file__)[:-10] + '/' + ext
 

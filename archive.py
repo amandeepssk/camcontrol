@@ -4,14 +4,12 @@ import tarfile
 
 def save(secs=600):
     #secs is how far back to save
-    print 'Compressing the past %d seconds' % secs
     secs = secs * 1000000
     current_time = config.get_unixtime()
     min_time = last_archive_time()
     if min_time < current_time - secs:
         min_time = current_time - secs
     _compress_files(current_time, _retrieve_save_files(min_time))
-    print 'Done Compressing'
 
 def _compress_files(now, save_files):
     if len(save_files) > 0:
@@ -47,7 +45,6 @@ def last_archive_time():
 
 def roll(secs):
     #secs is how far back to delete, i.e. 3600 would be deleting everything > 1 hr before
-    print 'Rolling anything from before %d seconds ago' % secs
     directory = config.capture_dir()
     current_time = config.get_unixtime()
     secs = secs * 1000000

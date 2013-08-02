@@ -30,16 +30,10 @@ def start_poll(epoll, f_archive, f_toggle, psecs, rsecs):
                     pinIO.light(config.light_pins['archive'], False)
                 if fileno == f_toggle.fileno():
                     config.toggle_capturing()
-                    if config.is_capturing():
-                        print 'Started Capturing'
-                    else:
-                        print 'Stopped Capturing'
                     pinIO.light(config.light_pins['toggle'], config.is_capturing())
             if count % pcount == 0 and config.is_capturing():
-                print 'taking pics, count: %d' % count
                 control.capture()
             if count >= rcount and config.is_capturing():
-                print 'going to roll now, count: %d' % count
                 archive.roll(rsecs)
                 count = 0
 

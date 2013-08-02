@@ -18,7 +18,6 @@ def _get_cams():
     return []
 
 def _capture(cam, time):
-    print 'Capturing from cam %s at time %d' % (cam, time)
     pinIO.subprocess(_capture_command(cam, time))
     
 def _capture_command(cam, time):
