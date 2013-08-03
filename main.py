@@ -41,7 +41,7 @@ def start_poll(epoll, f_archive, f_toggle, psecs, rsecs):
                 archive.roll(rsecs)
                 count = 0
 
-def start(psecs, rsecs=7200):
+def start(psecs, rsecs=300):
     try:
         pinIO.open_pins()
     except Exception, e:
@@ -61,7 +61,7 @@ if __name__ == '__main__':
                                      usage='Precedence: Stop, Start, Archive, Roll')
     parser.add_argument('--stop', help='terminate any running cameras', action="store_true")
     parser.add_argument('--start', help='finds and starts all cameras', action="store_true")
-    parser.add_argument('--psecs', type=int, default=10, choices=[10,20,30,60], help='time between taking pictures')
+    parser.add_argument('--psecs', type=int, default=5, choices=[5,10,30,60], help='time between taking pictures')
     parser.add_argument('--archive', type=int, choices=[30, 600, 3600], help='compresses recent data')
     parser.add_argument('--roll', type=int, help='deletes older uncompressed data')
 

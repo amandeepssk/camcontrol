@@ -21,7 +21,6 @@ def _capture(cam, time):
     pinIO.subprocess(_capture_command(cam, time))
     
 def _capture_command(cam, time):
-    pos = cam[-1]
-    fout = config.capture_dir() + '/' + str(time) + '_' + pos + '.jpeg'
+    fout = config.capture_dir() + '/' + str(time) + '_' + cam[-1] + '.jpeg'
     return 'streamer -t 1 -r 30 -c %s -o %s -j 100 -s 960x720' % (cam, fout)
 

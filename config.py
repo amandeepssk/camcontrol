@@ -3,7 +3,7 @@ import datetime
 
 poll_time = .5
 capturing = False
-archive_time = 600 #how far back to archive, in seconds
+archive_time = 180 #how far back to archive, in seconds
 start_date = datetime.datetime(year=1970,month=1,day=1)
 gpio_dir = '/sys/class/gpio'
 switch_pins = {'archive':'23', 'toggle':'22'}
