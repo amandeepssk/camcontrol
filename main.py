@@ -19,8 +19,20 @@ def start_poll(epoll, f_archive, f_toggle, psecs, rsecs):
     pcount = psecs / config.poll_time
     rcount = rsecs / config.poll_time
     count = 0
+    accelerometer_logger = open('/home/ubuntu/camcontrol/log_accel.txt', 'w')
+    helper = None
     with f_archive, f_toggle:
         while True:
+            if not helper:
+                try:
+                    helper = pinIO.open_ain_helper()                
+                except Exception, e:
+                    print e
+            if helper and config.is_capturing():
+                vals = pinIO.accelerometer_values(helper)
+                accelerometer_logger.write('volts - x: %f, y: %f, z: %f\n' % (vals.get('x'), vals.get('y'), vals.get('z')))
+                accelerometer_logger.write('gs - x: %f, y: %f, z: %f\n' % (pinIO.g(vals.get('x')), pinIO.g(vals.get('y')), pinIO.g(vals.get('z'))))
+                accelerometer_logger.write('\n\n')
             count += 1
             events = epoll.poll(config.poll_time) #every 500 millisec
             for fileno, event in events:

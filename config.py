@@ -8,6 +8,8 @@ start_date = datetime.datetime(year=1970,month=1,day=1)
 gpio_dir = '/sys/class/gpio'
 switch_pins = {'archive':'23', 'toggle':'22'}
 light_pins  = {'archive':'27', 'toggle':'44'}
+accelerometer_pins = {'x':'AIN5', 'y':'AIN3', 'z':'AIN1'}
+sound_pin = 'AIN0'
 
 def _get_dir(ext):
     if os.path.exists('/media/BONESTORAGE'):
