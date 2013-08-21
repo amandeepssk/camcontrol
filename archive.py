@@ -11,14 +11,6 @@ def save(secs=600):
     if min_time < current_time - secs:
         min_time = current_time - secs
     _compress_files(current_time, _retrieve_save_files(min_time))
-    ###
-    # Above is iteration using timestamps
-    # Below is iteration using countstamps
-    ###
-    # secs now is picture / psecs 
-    # just compress everything in the capture archive
-    # print 'Archiving'
-    # _compress_all_files(config.capture_dir())
 
 def next_gz_annotate(directory):
     gzs = [int(name.split('.tar.gz')[0].split('/')[-1]) for name in os.listdir(directory)]
@@ -47,15 +39,19 @@ def _compress_files(now, save_files):
 
 def _retrieve_save_files(previous):
     save_files = []
-    capture_directory = config.capture_dir()
-    for f in os.listdir(capture_directory):
+    save_files = _add_to_save_files(config.capture_dir(), save_files, previous)
+    save_files = _add_to_save_files(config.audio_dir(), save_files, previous)
+    return save_files
+
+def _add_to_save_files(d, files, previous):
+    for f in os.listdir(d):
         try:
             f_time = int(f.split('_')[0])
             if f_time > previous:
-                save_files.append(capture_directory + '/' + f)
+                files.append(d + '/' + f)
         except Exception, e:
             print e
-    return save_files
+    return files
     
 def last_archive_time():
     directory = config.archive_dir()
@@ -71,30 +67,20 @@ def last_archive_time():
 
 def roll(secs):
     #secs is how far back to delete, i.e. 3600 would be deleting everything > 1 hr before
-    directory = config.capture_dir()
     current_time = config.get_unixtime()
     print 'Rolling at time %s' % current_time
     secs = secs * 1000000
-    for f in os.listdir(directory):
+    _roll_dir(config.capture_dir(), secs, current_time)
+    _roll_dir(config.audio_dir(), secs, current_time)
+
+def _roll_dir(d, secs, current_time):
+    for f in os.listdir(d):
         try:
             f_time = int(f.split('_')[0])
             if current_time - f_time > secs:
-                os.remove(directory + '/' + f)
+                os.remove(d + '/' + f)
         except Exception, e:
             print e
-    ###
-    # Above is iteration using timestamps
-    # Below is iteration using countstamps
-    ###
-    # directory = config.capture_dir()
-    # print 'Rolling'
-    # for f in os.listdir(directory):
-    #     try:
-    #         stamp = int(f.split('_')[0])
-    #         if stamp > secs:
-    #             os.remove(directory + '/' + f)
-    #     except Exception, e:
-    #         print e
     
     
     

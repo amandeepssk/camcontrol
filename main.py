@@ -16,8 +16,6 @@ def stop():
 
 def start_poll(epoll, f_archive, f_toggle, psecs, rsecs):
     config.toggle_capturing(False)
-    pcount = psecs / config.poll_time
-    rcount = rsecs / config.poll_time
     count = 0
     with f_archive, f_toggle:
         while True:
@@ -27,8 +25,6 @@ def start_poll(epoll, f_archive, f_toggle, psecs, rsecs):
                 if fileno == f_archive.fileno():
                     pinIO.light(config.light_pins['archive'], True)
                     archive.save(config.archive_time)
-                    #archive.save(int(config.archive_time / pcount))
-                    #count = 0
                     pinIO.light(config.light_pins['archive'], False)
                 if fileno == f_toggle.fileno():
                     config.toggle_capturing()
@@ -37,13 +33,15 @@ def start_poll(epoll, f_archive, f_toggle, psecs, rsecs):
                     else:
                         print 'Stopped Capturing'
                     pinIO.light(config.light_pins['toggle'], config.is_capturing())
-            if count % pcount == 0 and config.is_capturing():
-                #control.capture(int(count / pcount))
-                control.capture()
-            if count > int(config.archive_time/pcount) and config.is_capturing():
-                #archive.roll(int(config.archive_time / pcount))
+            if count % psecs == 0 and config.is_capturing():
+                control.capture(config.get_unixtime())
+            if count > rsecs/2 and config.is_capturing():
                 archive.roll(rsecs)
                 count = 0
+            if config.is_capturing():
+                #hack: stop and record audio 
+                control.sound(config.get_unixtime(), 1)
+
 
 def start_time():
     pinIO.subprocess('echo ds1307 0x68 > /sys/class/i2c-adapter/i2c-1/new_device')
@@ -51,13 +49,13 @@ def start_time():
     pinIO.subprocess('hwclock -w')
     
 def start(psecs, rsecs=300):
-    try:
-        output, errors = pinIO.subprocess('ls /dev/')
-        if not 'rtc1' in output.split('\n'):
-            start_time()
-    except Exception, e:
-        print e
-        sys.exit("Time not enabled")
+    # try:
+    #     output, errors = pinIO.subprocess('ls /dev/')
+    #     if not 'rtc1' in output.split('\n'):
+    #         start_time()
+    # except Exception, e:
+    #     print e
+    #     sys.exit("Time not enabled")
     try:
         pinIO.open_pins()
     except Exception, e:
