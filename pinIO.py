@@ -1,3 +1,4 @@
+import os
 import select
 import subprocess as sub
 import config
@@ -41,5 +42,17 @@ def get_poll():
 def light(pin, on):
     value = '1' if on else '0'
     subprocess('echo %s > %s/gpio%s/value' % (value, config.gpio_dir, pin))
-        
     
+def ain_helper():
+    directory = '/sys/bus/platform/drivers/bone-iio-helper'
+    for f in os.listdir(directory):
+        if f[:6] == 'helper':
+            return directory + '/' + f
+    return None
+
+def open_ain_helper():
+    subprocess('echo cape-bone-iio > /sys/devices/bone_capemgr.9/slots')
+    return ain_helper()            
+    
+    
+        

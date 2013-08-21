@@ -5,11 +5,10 @@ import pinIO
 
 gpio_dir = config.gpio_dir
 
-def capture():
-    now = config.get_unixtime()
+def capture(stamp=0):
     cams = _get_cams()
     for cam in cams:
-        _capture(cam, now)
+        _capture(cam, stamp)
     
 def _get_cams():
     output, errors = pinIO.subprocess('ls /dev/video*')
@@ -17,10 +16,10 @@ def _get_cams():
         return output.strip().split('\n')
     return []
 
-def _capture(cam, time):
-    pinIO.subprocess(_capture_command(cam, time))
+def _capture(cam, stamp):
+    pinIO.subprocess(_capture_command(cam, stamp))
     
-def _capture_command(cam, time):
-    fout = config.capture_dir() + '/' + str(time) + '_' + cam[-1] + '.jpeg'
+def _capture_command(cam, stamp):
+    fout = config.capture_dir() + '/' + str(stamp) + '_' + cam[-1] + '.jpeg'
     return 'streamer -t 1 -r 30 -c %s -o %s -j 100 -s 960x720' % (cam, fout)
 

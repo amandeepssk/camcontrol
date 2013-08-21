@@ -6,15 +6,17 @@ capturing = False
 archive_time = 180 #how far back to archive, in seconds
 start_date = datetime.datetime(year=1970,month=1,day=1)
 gpio_dir = '/sys/class/gpio'
-switch_pins = {'archive':'23', 'toggle':'22'}
+switch_pins = {'archive':'23', 'toggle':'47'}
 light_pins  = {'archive':'27', 'toggle':'44'}
+accelerometer_pins = {'x':'AIN5', 'y':'AIN3', 'z':'AIN1'}
+sound_pin = 'AIN0'
 
 def _get_dir(ext):
-    if os.path.exists('/media/BONESTORAGE'):
-        if not os.path.exists('/media/BONESTORAGE/' + ext):
-            print 'mkdiring bonestorage'
-            os.mkdir('/media/BONESTORAGE/' + ext)
-        return '/media/BONESTORAGE/' + ext
+    # if os.path.exists('/media/BONESTORAGE'):
+    #     if not os.path.exists('/media/BONESTORAGE/' + ext):
+    #         print 'mkdiring bonestorage'
+    #         os.mkdir('/media/BONESTORAGE/' + ext)
+    #     return '/media/BONESTORAGE/' + ext
     return os.path.realpath(__file__)[:-10] + '/' + ext
 
 def capture_dir():

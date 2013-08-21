@@ -27,6 +27,8 @@ def start_poll(epoll, f_archive, f_toggle, psecs, rsecs):
                 if fileno == f_archive.fileno():
                     pinIO.light(config.light_pins['archive'], True)
                     archive.save(config.archive_time)
+                    #archive.save(int(config.archive_time / pcount))
+                    #count = 0
                     pinIO.light(config.light_pins['archive'], False)
                 if fileno == f_toggle.fileno():
                     config.toggle_capturing()
@@ -36,12 +38,26 @@ def start_poll(epoll, f_archive, f_toggle, psecs, rsecs):
                         print 'Stopped Capturing'
                     pinIO.light(config.light_pins['toggle'], config.is_capturing())
             if count % pcount == 0 and config.is_capturing():
+                #control.capture(int(count / pcount))
                 control.capture()
-            if count >= rcount and config.is_capturing():
+            if count > int(config.archive_time/pcount) and config.is_capturing():
+                #archive.roll(int(config.archive_time / pcount))
                 archive.roll(rsecs)
                 count = 0
 
+def start_time():
+    pinIO.subprocess('echo ds1307 0x68 > /sys/class/i2c-adapter/i2c-1/new_device')
+    pinIO.subprocess('hwclock -s -f /dev/rtc1')
+    pinIO.subprocess('hwclock -w')
+    
 def start(psecs, rsecs=300):
+    try:
+        output, errors = pinIO.subprocess('ls /dev/')
+        if not 'rtc1' in output.split('\n'):
+            start_time()
+    except Exception, e:
+        print e
+        sys.exit("Time not enabled")
     try:
         pinIO.open_pins()
     except Exception, e:

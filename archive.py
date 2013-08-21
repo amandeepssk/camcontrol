@@ -11,6 +11,31 @@ def save(secs=600):
     if min_time < current_time - secs:
         min_time = current_time - secs
     _compress_files(current_time, _retrieve_save_files(min_time))
+    ###
+    # Above is iteration using timestamps
+    # Below is iteration using countstamps
+    ###
+    # secs now is picture / psecs 
+    # just compress everything in the capture archive
+    # print 'Archiving'
+    # _compress_all_files(config.capture_dir())
+
+def next_gz_annotate(directory):
+    gzs = [int(name.split('.tar.gz')[0].split('/')[-1]) for name in os.listdir(directory)]
+    sgzs = sorted(gzs, reverse=True)
+    if len(sgzs) == 0:
+        return 1
+    return sgzs[0] + 1
+    
+def _compress_all_files(directory):
+    print 'compress all files'
+    if len(os.listdir(directory)) == 0:
+        return
+    with tarfile.open(config.archive_dir() + '/' + str(next_gz_annotate(config.archive_dir())) + '.tar.gz', "w:gz") as tar:
+        for f in os.listdir(directory):
+            tar.add(directory + '/' + f, arcname=f.split('/')[-1])
+    for f in os.listdir(directory):
+        os.remove(directory + '/' + f)
 
 def _compress_files(now, save_files):
     if len(save_files) > 0:
@@ -57,3 +82,19 @@ def roll(secs):
                 os.remove(directory + '/' + f)
         except Exception, e:
             print e
+    ###
+    # Above is iteration using timestamps
+    # Below is iteration using countstamps
+    ###
+    # directory = config.capture_dir()
+    # print 'Rolling'
+    # for f in os.listdir(directory):
+    #     try:
+    #         stamp = int(f.split('_')[0])
+    #         if stamp > secs:
+    #             os.remove(directory + '/' + f)
+    #     except Exception, e:
+    #         print e
+    
+    
+    
