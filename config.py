@@ -3,6 +3,8 @@ import datetime
 
 poll_time = .5
 capturing = False
+accelerometer = False
+sounding = False
 archive_time = 240 #how far back to archive, in seconds
 start_date = datetime.datetime(year=1970,month=1,day=1)
 gpio_dir = '/sys/class/gpio'
@@ -30,6 +32,12 @@ def audio_dir():
 
 def is_capturing():
     return capturing
+
+def is_accelerometer():
+    return accelerometer
+
+def is_sounding():
+    return sounding
 
 def toggle_capturing(set_value=None):
     global capturing
