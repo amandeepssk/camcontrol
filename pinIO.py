@@ -51,8 +51,12 @@ def ain_helper():
     return None
 
 def open_ain_helper():
-    subprocess('echo cape-bone-iio > /sys/devices/bone_capemgr.9/slots')
-    return ain_helper()            
+    try:
+        subprocess('echo cape-bone-iio > /sys/devices/bone_capemgr.9/slots')
+        return ain_helper()            
+    except Exception, e:
+        print e
+        return None
     
     
         

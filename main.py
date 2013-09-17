@@ -17,16 +17,13 @@ def stop():
 def start_poll(epoll, f_archive, f_toggle, psecs, rsecs):
     config.toggle_capturing(False)
     count = 0
+    psecs = psecs / config.poll_time
     accelerometer_logger = open('/home/ubuntu/camcontrol/log_accel.txt', 'w')
-    helper = None
+    helper = pinIO.open_ain_helper()
     with f_archive, f_toggle:
+        archive.roll(rsecs)
         while True:
-            if not helper:
-                try:
-                    helper = pinIO.open_ain_helper()                
-                except Exception, e:
-                    print e
-            if helper and config.is_capturing():
+            if helper and config.is_capturing() and config.is_accelerometer():
                 vals = pinIO.accelerometer_values(helper)
                 accelerometer_logger.write('volts - x: %f, y: %f, z: %f\n' % (vals.get('x'), vals.get('y'), vals.get('z')))
                 accelerometer_logger.write('gs - x: %f, y: %f, z: %f\n' % (pinIO.g(vals.get('x')), pinIO.g(vals.get('y')), pinIO.g(vals.get('z'))))
@@ -39,7 +36,7 @@ def start_poll(epoll, f_archive, f_toggle, psecs, rsecs):
                     archive.save(config.archive_time)
                     pinIO.light(config.light_pins['archive'], False)
                 if fileno == f_toggle.fileno():
-                    config.toggle_capturing()
+                    # config.toggle_capturing()
                     if config.is_capturing():
                         print 'Started Capturing'
                     else:
@@ -50,8 +47,8 @@ def start_poll(epoll, f_archive, f_toggle, psecs, rsecs):
             if count > rsecs/2 and config.is_capturing():
                 archive.roll(rsecs)
                 count = 0
-            if config.is_capturing():
-                #hack: stop and record audio 
+            if config.is_capturing() and config.is_sounding():
+                #hack to stop and record audio ... not needed right now
                 control.sound(config.get_unixtime(), 1)
 
 
